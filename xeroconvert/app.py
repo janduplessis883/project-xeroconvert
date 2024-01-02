@@ -21,7 +21,7 @@ html = """
     font-weight: bold;
 }
 </style>
-<div class="gradient-text">XeroConvert</div>
+<div class="gradient-text">XeroConvert</div> <a href="https://janduplessis.notion.site/XeroConvert-Help-4a8586902d1a4adfaed23fcfa610fbdb?pvs=4">FAQ & Help</a>
 """
 
 # Render the HTML in the Streamlit app
