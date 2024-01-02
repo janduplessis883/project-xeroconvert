@@ -56,7 +56,9 @@ def send_final_email(email, diff):
         This can happend and the quickest way to deal with this is Xero is to add an additional row on your inoice with the difference amount (neg or positive), and assign it account reference Xtra NHS Income.<BR>
         If you have any questiosn please feel free to reply to this email.<BR><B>Share this tool with your colleagues.</b><BR><BR>
         Best wishes,<BR>
-        <B>XeroConvert</B>"""
+        <B>XeroConvert</B><BR><BR>
+        <img src='https://github.com/janduplessis883/project-xeroconvert/blob/master/images/bmc_qr.png?raw=true' width=150>
+        """
         
     email_object = {
         "to": email,
