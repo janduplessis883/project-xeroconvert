@@ -33,8 +33,9 @@ def email_verification_section():
         if st.button("Submit Code"):
             if str(entered_code) == str(st.session_state['code']):
                 st.session_state['email_verified'] = True
-                st.success("Email verified successfully!")
+                st.success("Email verified successfully! Click Continue to proceed to Invoice Processing")
                 st.button("Continue...")
+                st.image('../images/xeroconvert.png')
             else:
                 st.error("Incorrect code.")
 
@@ -49,7 +50,7 @@ def invoice_form_section():
         if submit_button and file_upload is not None:
             format_invoice_no = format_invoice_number(invoice_number)
             st.write(f"✔️ Invoice number formatted: {format_invoice_no}")
-            format_invoice_date = invoice_date.strftime('%d-%b-%Y')
+            format_invoice_date = invoice_date.strftime('%d %b %Y')
             st.write(f"✔️ Invoice date formatted: {format_invoice_date}")
             
             full_lines = read_pdf_pages(file_upload)
@@ -75,7 +76,10 @@ def invoice_form_section():
             st.session_state['processed_df'] = df.to_csv(index=False).encode('utf-8')
             invoice_t = df['Total'][0]
             invoice_diff = calculate_diff(total_amount_master, invoice_t)
-            st.write(f"Invoice Diff: £ {round(invoice_diff, 2)}")
+            st.info(f"Nett Income: £ {total_amount_master}")
+            st.info(f"Processed invoice Total: £ {round(invoice_t,2)}")
+            st.warning(f"Difference: £ {round(invoice_diff, 2)}")
+            st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
             
 
 
