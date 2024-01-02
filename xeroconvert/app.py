@@ -6,9 +6,11 @@ import random
 from io import StringIO
 import datetime
 
-
 from utils import *
 
+st.set_page_config(
+    page_title="XeroConvert",
+)
 # Title of the app
 html = """
 <style>

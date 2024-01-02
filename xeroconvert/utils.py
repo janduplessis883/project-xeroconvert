@@ -48,13 +48,15 @@ def send_verification_code(email, code):
     client.send.email(email_object)
     print("👍 Verification email sent!")
     
-def send_final_email(email, invoice_no, diff):
+def send_final_email(email, invoice_no, diff_amount):
     email_message = f"""Hi,<BR>
         Thank you for using <b>XeroConvert</b>!<BR>Please ensure you download your processed invoice via the download button on the app.<BR>
         Your invoice has shown a differece of:
-        <h2>{invoice_no}</h2>
-        <h2>{diff}</h2>
-        This can happend and the quickest way to deal with this is Xero is to add an additional row on your inoice with the difference amount (neg or positive), and assign it account reference Xtra NHS Income.<BR>
+        <h3>{invoice_no}</h3>
+        <h3>{diff_amount}</h3>
+        I wanted to address a situation where an invoice might not align perfectly with the expected amounts. In cases like these, a swift and effective solution in Xero is to insert an additional line item on the invoice. This item should reflect the difference, whether it's a negative or positive value.
+        <BR><BR>
+        Please allocate this additional item to the account code "Xtra NHS Income." This method ensures accuracy in our financial records and helps in streamlining the reconciliation process.<BR>
         If you have any questiosn please feel free to reply to this email.<BR><B>Share this tool with your colleagues.</b><BR><BR>
         Best wishes,<BR>
         <B>XeroConvert</B><BR><BR>
