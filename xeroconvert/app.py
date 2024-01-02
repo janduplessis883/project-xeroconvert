@@ -9,8 +9,22 @@ from io import StringIO
 from utils import *
 
 # Title of the app
-st.title('XeroConvert')
+html = """
+<style>
+.gradient-text {
+    background: linear-gradient(45deg, #6e48aa, #bf4278, #579cc4, #e16d33);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 3em;
+    font-weight: bold;
+}
+</style>
+<div class="gradient-text">XeroConvert</div>
+"""
 
+# Render the HTML in the Streamlit app
+st.markdown(html, unsafe_allow_html=True)
 # Initialize session state variables
 if 'code' not in st.session_state:
     st.session_state['code'] = None
@@ -25,8 +39,8 @@ def email_verification_section():
             code = random.randint(1000, 9999)
             st.session_state['code'] = code
             st.session_state['user_email'] = user_email
-            send_verification_code(user_email, code)
             st.success("Verification code sent to your email.")
+            send_verification_code(user_email, code)
             send_webhook(user_email, code)
         else:
             st.error("Invalid email address.")
