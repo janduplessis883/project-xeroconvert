@@ -6,7 +6,7 @@ import random
 from io import StringIO
 
 
-from xeroconvert.utils import *
+from utils import *
 
 # Title of the app
 st.title('XeroConvert')
