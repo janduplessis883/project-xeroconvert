@@ -1,0 +1,30 @@
+# Core packages
+numpy==1.23.5
+pandas==1.5.3
+
+# Visualization
+matplotlib 
+seaborn
+
+# Jupyter
+notebook==6.5.5
+notebook_shim==0.2.3
+ipykernel
+ipywidgets
+
+# Utilities 
+colorama
+pytest
+icecream
+
+# Misc
+python-dotenv
+PyPDF2
+streamlit
+contiguity
+watchdog
+random
+time
+re
+os
+datetime
