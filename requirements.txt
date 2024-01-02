@@ -22,9 +22,3 @@ python-dotenv
 PyPDF2
 streamlit
 contiguity
-watchdog
-random
-time
-re
-os
-datetime
