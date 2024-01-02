@@ -47,6 +47,27 @@ def send_verification_code(email, code):
 
     client.send.email(email_object)
     print("👍 Verification email sent!")
+    
+def send_final_email(email, diff):
+    email_message = f"""Hi,<BR>
+        Thank you for using <b>XeroConvert</b>!<BR>Please ensure you download your processed invoice via the download button on the app.<BR>
+        Your invoice has shown a differece of:
+        <h2>{diff}</h2>
+        This can happend and the quickest way to deal with this is Xero is to add an additional row on your inoice with the difference amount (neg or positive), and assign it account reference Xtra NHS Income.<BR>
+        If you have any questiosn please feel free to reply to this email.<BR><B>Share this tool with your colleagues.</b><BR><BR>
+        Best wishes,<BR>
+        <B>XeroConvert</B>"""
+        
+    email_object = {
+        "to": email,
+        "from": "XeroConvert",
+        "replyTo": "jan.duplessis@nhs.net",
+        "subject": "XeroConvert - Outcome",
+        "html": email_message,
+    }
+
+    client.send.email(email_object)
+    print("👍 Verification email sent!")
 
 # Get Text off PDF Pages, one at a time
 def read_pdf_pages(loaded_pdf):

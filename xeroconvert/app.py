@@ -101,7 +101,7 @@ def invoice_form_section():
             send_webhook_outcome(st.session_state['code'], diff)
             st.warning(diff)
             st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
-            
+            send_final_email(st.session_state['user_email'], f"£ {round(invoice_diff, 2)}")
 
 
             
@@ -117,6 +117,7 @@ def invoice_form_section():
             file_name=f'{return_timestamp()}_XeroImport.csv',
             mime='text/csv',
         )
+
 
 # Display sections based on email verification status
 if not st.session_state['email_verified']:
