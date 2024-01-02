@@ -6,7 +6,7 @@ import random
 from io import StringIO
 import datetime
 
-from xeroconvert.utils import *
+from utils import *
 
 st.set_page_config(
     page_title="XeroConvert",
