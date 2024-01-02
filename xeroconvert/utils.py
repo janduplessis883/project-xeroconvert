@@ -9,12 +9,16 @@ import contiguity
 import os
 import datetime
 import requests
+import streamlit as st
 
+# Try to get the environment variable first
 client_id = os.environ.get("CONTIGUITY_API")
+
+# If not found, fall back to Streamlit secrets
+if client_id is None:
+    client_id = st.secrets.get("CONTIGUITY_API")
+    
 client = contiguity.login(client_id)
-
-
-
 
 # = Backend Functions + Operations =================================================================
 
