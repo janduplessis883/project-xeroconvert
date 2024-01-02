@@ -4,6 +4,7 @@ import re
 import pandas as pd
 import random
 from io import StringIO
+import datetime
 
 
 from utils import *
@@ -60,7 +61,7 @@ def invoice_form_section():
     with st.form("invoice_form"):
         invoice_number = st.text_input("Invoice Number")
         st.markdown("Invoice numbers start with `AutoINV-xxxxx`, it is important to use the next unique invoice number according to Xero. Make a note of your last used invoice number for furutre reference.")
-        invoice_date = st.date_input("Invoice Date", None)
+        invoice_date = st.date_input("Invoice Date", datetime.date.today())
         file_upload = st.file_uploader("Upload File", type=['pdf'])
         submit_button = st.form_submit_button("Process Invoice")
 
@@ -117,7 +118,7 @@ def invoice_form_section():
             file_name=f'{return_timestamp()}_XeroImport.csv',
             mime='text/csv',
         )
-
+        st.markdown("App by [janduplessis883](https://github.com/janduplessis883/project-xeroconvert)")
 
 # Display sections based on email verification status
 if not st.session_state['email_verified']:
