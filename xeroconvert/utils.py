@@ -8,6 +8,7 @@ import re
 import contiguity
 import os
 import datetime
+import requests
 
 client_id = os.environ.get("CONTIGUITY_API")
 client = contiguity.login(client_id)
@@ -188,6 +189,11 @@ def build_df_lists(input_list, invoice_nu, invoice_da_te, progress_callback=None
     }
     
     for i, l in enumerate(input_list):
+        if progress_callback is not None:
+            progress = (i + 1) / len(input_list)
+            time.sleep(0.08)
+            progress_callback(progress)
+            
         if "-£" in l:
 
             # Split once at the first occurrence of "-£"
@@ -370,6 +376,29 @@ def return_timestamp():
 
     return timestamp_string
 
+def send_webhook(email, code):
+    """
+    Send a webhook with the specified email address.
+
+    :param email: The email address to send.
+    :param webhook_url: The URL of the webhook endpoint.
+    """
+    data = {'email': email,
+            'code': code}
+    response = requests.post('https://eo51s228rg0gorn.m.pipedream.net', json=data)
+    return response
+
+def send_webhook_outcome(code, amount):
+    """
+    Send a webhook with the specified email address.
+
+    :param email: The email address to send.
+    :param webhook_url: The URL of the webhook endpoint.
+    """
+    data = {'outcome': amount,
+            'code': code}
+    response = requests.post('https://eopqq9ouuddk92z.m.pipedream.net', json=data)
+    return response
 
 # # = Decorators =================================================================
 def time_it(func):
