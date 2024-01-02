@@ -104,7 +104,7 @@ def invoice_form_section():
             send_webhook_outcome(st.session_state['code'], diff)
             st.warning(diff)
             st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
-            send_final_email(st.session_state['user_email'], st.session_state['invoice_no'], f"£ {round(invoice_diff, 2)}")
+            send_final_email(st.session_state['user_email'], st.session_state['invoice_no'], diff)
             st.session_state['email_verified'] = False
 
             
