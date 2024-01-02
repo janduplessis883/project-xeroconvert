@@ -18,7 +18,7 @@ client_id = os.environ.get("CONTIGUITY_API")
 if client_id is None:
     client_id = st.secrets.get("CONTIGUITY_API")
     
-client = contiguity.login(client_id)
+client = contiguity.login(client_id, True)
 
 # = Backend Functions + Operations =================================================================
 
@@ -117,12 +117,21 @@ def find_index_with_text(my_list, search_text):
             return index
     return -1  # Return -1 or some other value to indicate the text was not found
 
+def return_invoice_aspiration(aspiration_index, lines_list):
+    aspiration = lines_list[aspiration_index]
+    aspiration_amount = float(aspiration.split('£')[-1].replace(",",""))
+    return aspiration_amount
+
 def clean_amount_to_float(input_string):
     output = input_string.replace(",","")
     return float(output)
 
 def append_global_sum(input_list, amount):
     input_list.append(f"Global Sum £{str(amount)}")
+    return input_list
+
+def append_aspiration(input_list, amount):
+    input_list.append(f"QOF Aspiration £{str(amount)}")
     return input_list
 
 def format_invoice_number(input_number):

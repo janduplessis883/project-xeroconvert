@@ -53,8 +53,8 @@ def email_verification_section():
         if st.button("Submit Code"):
             if str(entered_code) == str(st.session_state['code']):
                 st.session_state['email_verified'] = True
-                st.success("Email verified successfully! Click Continue to proceed to Invoice Processing")
-                st.button("Continue...")
+                st.success("Email verified successfully!")
+                st.button("Continue to Statement Processing...")
             
             else:
                 st.error("Incorrect code.")
@@ -76,19 +76,25 @@ def invoice_form_section():
             st.write(f"✔️ Invoice date formatted: {format_invoice_date}")
             
             full_lines = read_pdf_pages(file_upload)
-            #st.write(full_lines)
+            full_lines = remove_qof(full_lines)
             st.write('✔️ PDF text extracted')
-            modified_lines = remove_qof(full_lines)
-            total_amount_master = return_invoice_total_amount(modified_lines)
+            total_amount_master = return_invoice_total_amount(full_lines)
             st.write(f"✔️ Nett Invoice amount extracted: £ {total_amount_master}")
-            final_list = list_minusexclusion_only_pound(modified_lines)
-            #st.write(final_list)
+            final_list = list_minusexclusion_only_pound(full_lines)
+
             # Find index of Global Sum Payment 
-            search_text = "Capitation Monthly Payment GMS/PMS/APMS"
-            index = find_index_with_text(modified_lines, search_text)
-            global_sum = modified_lines[index+1]
+            index = find_index_with_text(full_lines, "Capitation Monthly Payment GMS/PMS/APMS")
+            
+            
+            global_sum = full_lines[index+1]
             global_sum = clean_amount_to_float(global_sum)
             st.write(f"✔️ Global sum amount: £{global_sum}")
+            
+            index_aspiration = find_index_with_text(full_lines, 'Aspiration')
+
+            aspiration_amount = return_invoice_aspiration(index_aspiration, full_lines)
+            new_list = append_aspiration(final_list, aspiration_amount)
+            st.write(f"✔️ QOF Aspiration: £{aspiration_amount}")
             new_list = append_global_sum(final_list, global_sum)
             # Create a progress bar
             st.write("Progress - Invoice Extraction")
