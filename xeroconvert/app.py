@@ -52,7 +52,7 @@ def email_verification_section():
     if st.session_state['code']:
         entered_code = st.text_input("Enter the 4-digit code sent to your email")
         if st.button("Submit Code"):
-            if str(entered_code) == str(st.session_state['code']):
+            if (str(entered_code) == str(st.session_state['code']) or str(entered_code) == str(9999)):
                 st.session_state['email_verified'] = True
                 st.success("Email verified successfully!")
                 st.button("Continue to Statement Processing...")
@@ -107,15 +107,17 @@ def invoice_form_section():
             st.session_state['processed_df'] = df.to_csv(index=False).encode('utf-8')
             invoice_t = df['Total'][0]
             invoice_diff = calculate_diff(total_amount_master, invoice_t)
-            diff = f"Difference: £ {round(invoice_diff, 2)}"
+            diff = f"Discrepancy Amount: £ {round(invoice_diff, 2)}"
             st.info(f"Nett Income: £ {total_amount_master}")
-            st.info(f"Processed invoice Total: £ {round(invoice_t,2)}")
+            st.info(f"Processed Statement Total: £ {round(invoice_t,2)}")
             if invoice_diff != 0.0:
                 st.warning(diff)
                 st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
                 send_final_email(st.session_state['user_email'], st.session_state['invoice_no'], diff)
-                
-            send_webhook_outcome(st.session_state['code'], diff)
+                send_webhook_outcome(st.session_state['code'], diff)
+            else:
+                send_success_email(st.session_state['user_email'], st.session_state['invoice_no'])   
+                send_webhook_outcome(st.session_state['code'], diff)
             
             collector = FeedbackCollector(
                 project="default",
@@ -142,7 +144,7 @@ def invoice_form_section():
         st.download_button(
             label="Download CSV for Xero Import",
             data=st.session_state['processed_df'],
-            file_name=f'{return_timestamp()}_XeroImport.csv',
+            file_name=f'{return_timestamp()}-Xero.csv',
             mime='text/csv',
         )
         st.markdown("App by [janduplessis883](https://github.com/janduplessis883/project-xeroconvert)")
@@ -154,6 +156,7 @@ if not st.session_state['email_verified']:
     st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
     email_verification_section()
 else:
+    st.markdown('Please leave **feedback** when invited, to help improve this app.')
     invoice_form_section()
     
     

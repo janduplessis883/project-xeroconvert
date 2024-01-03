@@ -53,17 +53,32 @@ def send_verification_code(email, code):
     print("👍 Verification email sent!")
     
 def send_final_email(email, invoice_no, diff_amount):
-    email_message = f"""Hi,<BR>
-        Thank you for using <b>XeroConvert</b>!<BR>Please ensure you download your processed invoice via the download button on the app.<BR>
-        Your invoice has shown a differece of:
-        <h3>{invoice_no}</h3>
-        <h3>{diff_amount}</h3>
-        I wanted to address a situation where an invoice might not align perfectly with the expected amounts. In cases like these, a swift and effective solution in Xero is to insert an additional line item on the invoice. This item should reflect the difference, whether it's a negative or positive value.
-        <BR><BR>
-        Please allocate this additional item to the account code "Xtra NHS Income." This method ensures accuracy in our financial records and helps in streamlining the reconciliation process.<BR>
-        If you have any questiosn please feel free to reply to this email.<BR><B>Share this tool with your colleagues.</b><BR><BR>
-        Best wishes,<BR>
-        <B>XeroConvert</B><BR><BR>
+    email_message = f"""Hi,<BR><BR>
+
+Thank you for choosing XeroConvert for your invoicing needs.<BR>
+
+We have processed your recent invoice and noticed a discrepancy that requires your attention:
+
+<h2>Invoice Number: {invoice_no}</h2>
+<h2>{diff_amount}</h2>
+
+<B>Action Required:</B><BR>
+To align your invoice with the expected amounts, we recommend adding an additional line item to reflect this difference, whether negative or positive.<BR><BR>
+
+<B>How to Proceed:<B><BR>
+
+Insert an additional line item on the invoice.<BR>
+Assign this item to the account code: "Xtra NHS Income."<BR>
+This approach ensures precision in your financial records and streamlines the reconciliation process.<BR><BR>
+
+Should you have any questions or need further assistance, please don't hesitate to respond to this email. Your satisfaction is our priority.<BR><BR>
+
+Also, if you find XeroConvert helpful, please feel free to share this tool with your colleagues.<BR><BR>
+
+Best wishes,<BR><BR>
+
+Jan du Plessis<BR>
+<B>XeroConvert</B><BR><BR>
         <img src='https://github.com/janduplessis883/project-xeroconvert/blob/master/images/bmc_qr.png?raw=true' width=150>
         """
         
@@ -71,12 +86,42 @@ def send_final_email(email, invoice_no, diff_amount):
         "to": email,
         "from": "XeroConvert",
         "replyTo": "jan.duplessis@nhs.net",
-        "subject": "XeroConvert - Outcome",
+        "subject": "Important Update Regarding Your Invoice from XeroConvert",
         "html": email_message,
     }
 
     client.send.email(email_object)
-    print("👍 Verification email sent!")
+    
+def send_success_email(email, invoice_no):
+    email_message = f"""Hi,<br><br>
+
+    Thank you for choosing <b>XeroConvert</b> for your invoicing needs.<br><br>
+
+    We are pleased to inform you that we have successfully processed your recent invoice:<br>
+
+    <h2>Invoice Number: {invoice_no}</h2>
+
+    Should you have any questions or need further assistance, please don't hesitate to respond to this email. Your satisfaction is our top priority.<br><br>
+
+    Also, if you find XeroConvert helpful, please feel free to share this tool with your colleagues.<br><br>
+
+    Best wishes,<br><br>
+
+    Jan du Plessis<br>
+    <b>XeroConvert</b><br><br>
+        <img src='https://github.com/janduplessis883/project-xeroconvert/blob/master/images/bmc_qr.png?raw=true' width=150>
+        """
+        
+    email_object = {
+        "to": email,
+        "from": "XeroConvert",
+        "replyTo": "jan.duplessis@nhs.net",
+        "subject": "Invoice Processed Successfully",
+        "html": email_message,
+    }
+
+    client.send.email(email_object)
+   
 
 # Get Text off PDF Pages, one at a time
 def read_pdf_pages(loaded_pdf):
