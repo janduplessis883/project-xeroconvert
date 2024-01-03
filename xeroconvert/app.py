@@ -29,9 +29,7 @@ html = """
 """
 # Render the HTML in the Streamlit app
 st.markdown(html, unsafe_allow_html=True)
-st.markdown("""**XeroConvert** is an innovative solution designed to simplify the account management and processing challenges faced by GP surgeries. This tool seamlessly converts **PCSE Payment Statements** into a formatted CSV file, optimized for direct import into **Xero**, the leading Online Accounting software.""")
-st.markdown("""With XeroConvert, you can process a full year's worth of statements in less than an hour, revolutionizing your accounting practices.""")
-st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
+
 # Initialize session state variables
 if 'code' not in st.session_state:
     st.session_state['code'] = None
@@ -151,6 +149,9 @@ def invoice_form_section():
 
 # Display sections based on email verification status
 if not st.session_state['email_verified']:
+    st.markdown("""**XeroConvert** is an innovative solution designed to simplify the account management and processing challenges faced by GP surgeries. This tool seamlessly converts **PCSE Payment Statements** into a formatted CSV file, optimized for direct import into **Xero**, the leading Online Accounting software.""")
+    st.markdown("""With XeroConvert, you can process a full year's worth of statements in less than an hour, revolutionizing your accounting practices.""")
+    st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
     email_verification_section()
 else:
     invoice_form_section()
