@@ -5,6 +5,7 @@ import pandas as pd
 import random
 from io import StringIO
 import datetime
+from trubrics.integrations.streamlit import FeedbackCollector
 
 from utils import *
 
@@ -26,9 +27,11 @@ html = """
 <div class="gradient-text">XeroConvert <a href="https://janduplessis.notion.site/XeroConvert-Help-4a8586902d1a4adfaed23fcfa610fbdb?pvs=4">
     <img src="https://github.com/janduplessis883/project-xeroconvert/blob/master/images/icons8-help-24.png?raw=true" alt="FAQ & Help" style="width:16px;height:16px;"></a></div>
 """
-
 # Render the HTML in the Streamlit app
 st.markdown(html, unsafe_allow_html=True)
+st.markdown("""**XeroConvert** is an innovative solution designed to simplify the account management and processing challenges faced by GP surgeries. This tool seamlessly converts **PCSE Payment Statements** into a formatted CSV file, optimized for direct import into **Xero**, the leading Online Accounting software.""")
+st.markdown("""With XeroConvert, you can process a full year's worth of statements in less than an hour, revolutionizing your accounting practices.""")
+st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
 # Initialize session state variables
 if 'code' not in st.session_state:
     st.session_state['code'] = None
@@ -106,13 +109,29 @@ def invoice_form_section():
             st.session_state['processed_df'] = df.to_csv(index=False).encode('utf-8')
             invoice_t = df['Total'][0]
             invoice_diff = calculate_diff(total_amount_master, invoice_t)
+            diff = f"Difference: £ {round(invoice_diff, 2)}"
             st.info(f"Nett Income: £ {total_amount_master}")
             st.info(f"Processed invoice Total: £ {round(invoice_t,2)}")
-            diff = f"Difference: £ {round(invoice_diff, 2)}"
+            if invoice_diff != 0.0:
+                st.warning(diff)
+                st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
+                send_final_email(st.session_state['user_email'], st.session_state['invoice_no'], diff)
+                
             send_webhook_outcome(st.session_state['code'], diff)
-            st.warning(diff)
-            st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
-            send_final_email(st.session_state['user_email'], st.session_state['invoice_no'], diff)
+            
+            collector = FeedbackCollector(
+                project="default",
+                email=st.secrets.TRUBRICS_EMAIL,
+                password=st.secrets.TRUBRICS_PASSWORD,
+            )
+
+            collector.st_feedback(
+                component="default",
+                feedback_type="thumbs",
+                open_feedback_label="[Optional] Provide additional feedback",
+                model="gpt-3.5-turbo",
+                prompt_id=None,  # see `Prompts` to log prompts and model generations
+            )
             st.session_state['email_verified'] = False
 
             

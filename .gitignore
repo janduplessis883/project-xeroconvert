@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # Ignore data folder
-data/
+secrets.toml
