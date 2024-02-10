@@ -25,7 +25,7 @@ html = """
 }
 </style>
 <div class="gradient-text">XeroConvert <a href="https://janduplessis.notion.site/XeroConvert-Help-4a8586902d1a4adfaed23fcfa610fbdb?pvs=4">
-    <img src="https://github.com/janduplessis883/project-xeroconvert/blob/master/images/icons8-help-24.png?raw=true" alt="FAQ & Help" style="width:16px;height:16px;"></a></div>
+    <img src="https://github.com/janduplessis883/project-xeroconvert/blob/master/images/icons8-question-mark.gif?raw=true" alt="FAQ & Help" style="width:16px;height:16px;"></a></div>
 """
 # Render the HTML in the Streamlit app
 st.markdown(html, unsafe_allow_html=True)
