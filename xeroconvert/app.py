@@ -16,7 +16,7 @@ st.set_page_config(
 html = """
 <style>
 .gradient-text {
-    background: linear-gradient(45deg, #6e48aa, #bf4278, #579cc4, #e16d33);
+    background: linear-gradient(45deg, #6e48aa, #e73323, #9b5670, #4f7abd);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -154,6 +154,8 @@ if not st.session_state['email_verified']:
     st.markdown("""**XeroConvert** is an innovative solution designed to simplify the account management and processing challenges faced by GP surgeries. This tool seamlessly converts **PCSE Payment Statements** into a formatted CSV file, optimized for direct import into **Xero**, the leading Online Accounting software.""")
     st.markdown("""With XeroConvert, you can process a full year's worth of statements in less than an hour, revolutionizing your accounting practices.""")
     st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
+    st.markdown("The **integrity of your data** is our top priority. Thus, uploaded PDFs and the generated CSV files are neither stored nor archived on our systems. As soon as the conversion process is complete, all files are permanently deleted, ensuring your sensitive financial information remains confidential and in your control at all times. With XeroConvert, you can rest assured that your accounting data is processed with the utmost security and discretion.")
+    st.markdown("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net")
     email_verification_section()
 else:
     st.markdown('Please leave **feedback** when invited, to help improve this app.')
