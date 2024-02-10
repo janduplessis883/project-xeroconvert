@@ -159,6 +159,7 @@ if not st.session_state['email_verified']:
     st.video(video_url)
     st.markdown("The **integrity of your data** is our top priority. Thus, uploaded PDFs and the generated CSV files are neither stored nor archived on our systems. As soon as the conversion process is complete, all files are permanently deleted, ensuring your sensitive financial information remains confidential and in your control at all times. With XeroConvert, you can rest assured that your accounting data is processed with the utmost security and discretion.")
     st.markdown("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net")
+    st.divider()
     email_verification_section()
 else:
     st.markdown('Please leave **feedback** when invited, to help improve this app.')
