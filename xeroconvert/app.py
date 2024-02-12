@@ -6,6 +6,7 @@ import random
 from io import StringIO
 import datetime
 from trubrics.integrations.streamlit import FeedbackCollector
+import streamlit_shadcn_ui as ui
 
 from utils import *
 
@@ -38,27 +39,27 @@ if 'email_verified' not in st.session_state:
 
 # Email Verification Section
 def email_verification_section():
-    user_email = st.text_input('Enter your email address', value='')
-    if st.button('Verify Email') and user_email:
+    user_email = ui.input(default_value="", type='text', placeholder="Enter your email address.", key="input1")
+    if ui.button("Verify Email", key="verify_but") and user_email:
         if is_valid_email(user_email):
             code = random.randint(1000, 9999)
             st.session_state['code'] = code
             st.session_state['user_email'] = user_email
-            st.success("Verification code sent to your email.")
+            ui.badges(badge_list=[("Check your email for verification code.", "outline")], class_name="flex gap-2", key="verified")
             send_verification_code(user_email, code)
             send_webhook(user_email, code)
         else:
-            st.error("Invalid email address.")
+            ui.badges(badge_list=[("Invalid Email Address", "destructive")], class_name="flex gap-2", key="invalid")
     if st.session_state['code']:
-        entered_code = st.text_input("Enter the 4-digit code sent to your email")
-        if st.button("Submit Code"):
+        entered_code = ui.input(default_value="", type='text', placeholder="Enter 4-digit verification code.", key="input2")
+        if ui.button("Submit Code", key="submit_btn"):
             if (str(entered_code) == str(st.session_state['code']) or str(entered_code) == str(9999)):
                 st.session_state['email_verified'] = True
-                st.success("Email verified successfully!")
-                st.button("Continue to Statement Processing...")
+                ui.badges(badge_list=[("Email verified successfully!", "outline")], class_name="flex gap-2", key="emailverified")
+                ui.button("Continue to PCSE Statement Processing", key="continue_btn")
             
             else:
-                st.error("Incorrect code.")
+                ui.badges(badge_list=[("Incorrect Code, try again", "destructive")], class_name="flex gap-2", key="incorrectcode")
 
 # Invoice Form Section
 def invoice_form_section():
@@ -151,15 +152,19 @@ def invoice_form_section():
 
 # Display sections based on email verification status
 if not st.session_state['email_verified']:
+    switch_value = ui.switch(default_checked=False, label="Demo Video", key="switch1")
+    if switch_value == True:
+        video_url = "https://youtu.be/2v31iyN6fHo?si=6I-PXLOyw8BDntKU"
+        st.video(video_url)
+    
     st.markdown("""**XeroConvert** is an innovative solution designed to simplify the account management and processing challenges faced by GP surgeries. This tool seamlessly converts **PCSE Payment Statements** into a formatted CSV file, optimized for direct import into **Xero**, the leading Online Accounting software.""")
     st.markdown("""With XeroConvert, you can process a full year's worth of statements in less than an hour, revolutionizing your accounting practices.""")
     st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
-    
-    video_url = "https://youtu.be/2v31iyN6fHo?si=6I-PXLOyw8BDntKU"
-    st.video(video_url)
+
     st.markdown("The **integrity of your data** is our top priority. Thus, uploaded PDFs and the generated CSV files are neither stored nor archived on our systems. As soon as the conversion process is complete, all files are permanently deleted, ensuring your sensitive financial information remains confidential and in your control at all times. With XeroConvert, you can rest assured that your accounting data is processed with the utmost security and discretion.")
-    st.markdown("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net")
-    st.divider()
+    ui.badges(badge_list=[("Secure", "default"), ("PCSE Income Statements", "outline"), ("Xero Cloud Accounting", "outline")], class_name="flex gap-2", key="badges1")
+    ui.badges(badge_list=[("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net", "secondary")], class_name="flex gap-2", key="badges2")
+
     email_verification_section()
 else:
     st.markdown('Please leave **feedback** when invited, to help improve this app.')

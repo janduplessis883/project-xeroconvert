@@ -24,3 +24,4 @@ streamlit
 contiguity
 requests
 trubrics[streamlit]
+streamlit_shadcn_ui
