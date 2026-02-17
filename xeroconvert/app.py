@@ -5,7 +5,6 @@ import pandas as pd
 import random
 from io import StringIO
 import datetime
-from trubrics.integrations.streamlit import FeedbackCollector
 import streamlit_shadcn_ui as ui
 
 from utils import *
@@ -120,20 +119,7 @@ def invoice_form_section():
                 send_success_email(st.session_state['user_email'], st.session_state['invoice_no'])   
                 send_webhook_outcome(st.session_state['code'], diff)
             
-            collector = FeedbackCollector(
-                project="default",
-                email=st.secrets.TRUBRICS_EMAIL,
-                password=st.secrets.TRUBRICS_PASSWORD,
-            )
 
-            collector.st_feedback(
-                component="default",
-                feedback_type="thumbs",
-                open_feedback_label="[Optional] Provide additional feedback",
-                model="gpt-3.5-turbo",
-                prompt_id=None,  # see `Prompts` to log prompts and model generations
-            )
-            st.session_state['email_verified'] = False
 
             
         elif submit_button:
