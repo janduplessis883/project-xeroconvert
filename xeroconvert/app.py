@@ -29,7 +29,6 @@ st.markdown(html, unsafe_allow_html=True)
 # Invoice Form Section
 def invoice_form_section():
     with st.form("invoice_form"):
-        notification_email = st.text_input("Notification Email (optional)")
         invoice_number = st.text_input("Invoice Number")
         st.markdown("Invoice numbers start with `AutoINV-xxxxx`, it is important to use the next unique invoice number according to Xero. Make a note of your last used invoice number for furutre reference.")
         invoice_date = st.date_input("Invoice Date", datetime.date.today())
@@ -37,11 +36,6 @@ def invoice_form_section():
         submit_button = st.form_submit_button("Process Invoice")
 
         if submit_button and file_upload is not None:
-            should_send_email = bool(notification_email)
-            if should_send_email and not is_valid_email(notification_email):
-                st.warning("Notification email format is invalid. Continue without email, or provide a valid address.")
-                return
-
             format_invoice_no = format_invoice_number(invoice_number)
             st.write(f"✔️ Invoice number formatted: {format_invoice_no}")
             st.session_state['invoice_no'] = format_invoice_no
@@ -85,11 +79,7 @@ def invoice_form_section():
             if invoice_diff != 0.0:
                 st.warning(diff)
                 st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
-                if should_send_email:
-                    send_final_email(notification_email, st.session_state['invoice_no'], diff)
-            else:
-                if should_send_email:
-                    send_success_email(notification_email, st.session_state['invoice_no'])
+            
             
 
 

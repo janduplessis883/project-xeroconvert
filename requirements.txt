@@ -17,6 +17,5 @@ icecream
 python-dotenv
 PyPDF2
 streamlit
-contiguity
 requests
 streamlit_shadcn_ui

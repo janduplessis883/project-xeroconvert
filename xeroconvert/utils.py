@@ -1,21 +1,10 @@
-from datetime import datetime
 import time
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
 from PyPDF2 import PdfReader
 import io
 import re
-import contiguity
-import os
 import datetime
-import streamlit as st
-
-client = None
-client_id = os.environ.get("CONTIGUITY_API")
-if client_id is None:
-    client_id = st.secrets.get("CONTIGUITY_API")
-if client_id:
-    client = contiguity.login(client_id, True)
 
 # = Backend Functions + Operations =================================================================
 
@@ -29,78 +18,10 @@ def is_valid_email(email):
     return False
 
 def send_final_email(email, invoice_no, diff_amount):
-    if client is None:
-        return
-    email_message = f"""Hi,<BR><BR>
-
-Thank you for choosing XeroConvert for your invoicing needs.<BR>
-
-We have processed your recent invoice and noticed a discrepancy that requires your attention:
-
-<h2>Invoice Number: {invoice_no}</h2>
-<h2>{diff_amount}</h2>
-
-<B>Action Required:</B><BR>
-To align your invoice with the expected amounts, we recommend adding an additional line item to reflect this difference, whether negative or positive.<BR><BR>
-
-<B>How to Proceed:<B><BR>
-
-Insert an additional line item on the invoice.<BR>
-Assign this item to the account code: "Xtra NHS Income."<BR>
-This approach ensures precision in your financial records and streamlines the reconciliation process.<BR><BR>
-
-Should you have any questions or need further assistance, please don't hesitate to respond to this email. Your satisfaction is our priority.<BR><BR>
-
-Also, if you find XeroConvert helpful, please feel free to share this tool with your colleagues.<BR><BR>
-
-Best wishes,<BR><BR>
-
-Jan du Plessis<BR>
-<B>XeroConvert</B><BR><BR>
-        <img src='https://github.com/janduplessis883/project-xeroconvert/blob/master/images/bmc_qr.png?raw=true' width=150>
-        """
-
-    email_object = {
-        "to": email,
-        "from": "XeroConvert",
-        "replyTo": "jan.duplessis@nhs.net",
-        "subject": "Important Update Regarding Your Invoice from XeroConvert",
-        "html": email_message,
-    }
-
-    client.send.email(email_object)
+    return None
 
 def send_success_email(email, invoice_no):
-    if client is None:
-        return
-    email_message = f"""Hi,<br><br>
-
-    Thank you for choosing <b>XeroConvert</b> for your invoicing needs.<br><br>
-
-    We are pleased to inform you that we have successfully processed your recent invoice:<br>
-
-    <h2>Invoice Number: {invoice_no}</h2>
-
-    Should you have any questions or need further assistance, please don't hesitate to respond to this email. Your satisfaction is our top priority.<br><br>
-
-    Also, if you find XeroConvert helpful, please feel free to share this tool with your colleagues.<br><br>
-
-    Best wishes,<br><br>
-
-    Jan du Plessis<br>
-    <b>XeroConvert</b><br><br>
-        <img src='https://github.com/janduplessis883/project-xeroconvert/blob/master/images/bmc_qr.png?raw=true' width=150>
-        """
-
-    email_object = {
-        "to": email,
-        "from": "XeroConvert",
-        "replyTo": "jan.duplessis@nhs.net",
-        "subject": "Invoice Processed Successfully",
-        "html": email_message,
-    }
-
-    client.send.email(email_object)
+    return None
 
 
 # Get Text off PDF Pages, one at a time
