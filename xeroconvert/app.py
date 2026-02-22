@@ -1,9 +1,5 @@
 import streamlit as st
 import pandas as pd
-import re
-import pandas as pd
-import random
-from io import StringIO
 import datetime
 import streamlit_shadcn_ui as ui
 
@@ -30,39 +26,10 @@ html = """
 # Render the HTML in the Streamlit app
 st.markdown(html, unsafe_allow_html=True)
 
-# Initialize session state variables
-if 'code' not in st.session_state:
-    st.session_state['code'] = None
-if 'email_verified' not in st.session_state:
-    st.session_state['email_verified'] = False
-
-# Email Verification Section
-def email_verification_section():
-    user_email = ui.input(default_value="", type='text', placeholder="Enter your email address.", key="input1")
-    if ui.button("Verify Email", key="verify_but") and user_email:
-        if is_valid_email(user_email):
-            code = random.randint(1000, 9999)
-            st.session_state['code'] = code
-            st.session_state['user_email'] = user_email
-            ui.badges(badge_list=[("Check your email for verification code.", "outline")], class_name="flex gap-2", key="verified")
-            send_verification_code(user_email, code)
-            send_webhook(user_email, code)
-        else:
-            ui.badges(badge_list=[("Invalid Email Address", "destructive")], class_name="flex gap-2", key="invalid")
-    if st.session_state['code']:
-        entered_code = ui.input(default_value="", type='text', placeholder="Enter 4-digit verification code.", key="input2")
-        if ui.button("Submit Code", key="submit_btn"):
-            if (str(entered_code) == str(st.session_state['code']) or str(entered_code) == str(9999)):
-                st.session_state['email_verified'] = True
-                ui.badges(badge_list=[("Email verified successfully!", "outline")], class_name="flex gap-2", key="emailverified")
-                ui.button("Continue to PCSE Statement Processing", key="continue_btn")
-            
-            else:
-                ui.badges(badge_list=[("Incorrect Code, try again", "destructive")], class_name="flex gap-2", key="incorrectcode")
-
 # Invoice Form Section
 def invoice_form_section():
     with st.form("invoice_form"):
+        notification_email = st.text_input("Notification Email (optional)")
         invoice_number = st.text_input("Invoice Number")
         st.markdown("Invoice numbers start with `AutoINV-xxxxx`, it is important to use the next unique invoice number according to Xero. Make a note of your last used invoice number for furutre reference.")
         invoice_date = st.date_input("Invoice Date", datetime.date.today())
@@ -70,6 +37,11 @@ def invoice_form_section():
         submit_button = st.form_submit_button("Process Invoice")
 
         if submit_button and file_upload is not None:
+            should_send_email = bool(notification_email)
+            if should_send_email and not is_valid_email(notification_email):
+                st.warning("Notification email format is invalid. Continue without email, or provide a valid address.")
+                return
+
             format_invoice_no = format_invoice_number(invoice_number)
             st.write(f"✔️ Invoice number formatted: {format_invoice_no}")
             st.session_state['invoice_no'] = format_invoice_no
@@ -113,11 +85,11 @@ def invoice_form_section():
             if invoice_diff != 0.0:
                 st.warning(diff)
                 st.markdown("Dealing with differences in Nett Income and Invoice Total. Created an extra row in Xero for the diffrence and assign it to **Xtra NHS Income**.")
-                send_final_email(st.session_state['user_email'], st.session_state['invoice_no'], diff)
-                send_webhook_outcome(st.session_state['code'], diff)
+                if should_send_email:
+                    send_final_email(notification_email, st.session_state['invoice_no'], diff)
             else:
-                send_success_email(st.session_state['user_email'], st.session_state['invoice_no'])   
-                send_webhook_outcome(st.session_state['code'], diff)
+                if should_send_email:
+                    send_success_email(notification_email, st.session_state['invoice_no'])
             
 
 
@@ -136,24 +108,19 @@ def invoice_form_section():
         )
         st.markdown("App by [janduplessis883](https://github.com/janduplessis883/project-xeroconvert)")
 
-# Display sections based on email verification status
-if not st.session_state['email_verified']:
-    switch_value = ui.switch(default_checked=False, label="Demo Video", key="switch1")
-    if switch_value == True:
-        video_url = "https://youtu.be/2v31iyN6fHo?si=6I-PXLOyw8BDntKU"
-        st.video(video_url)
-    
-    st.markdown("""**XeroConvert** is an innovative solution designed to simplify the account management and processing challenges faced by GP surgeries. This tool seamlessly converts **PCSE Payment Statements** into a formatted CSV file, optimized for direct import into **Xero**, the leading Online Accounting software.""")
-    st.markdown("""With XeroConvert, you can process a full year's worth of statements in less than an hour, revolutionizing your accounting practices.""")
-    st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
+switch_value = ui.switch(default_checked=False, label="Demo Video", key="switch1")
+if switch_value == True:
+    video_url = "https://youtu.be/2v31iyN6fHo?si=6I-PXLOyw8BDntKU"
+    st.video(video_url)
 
-    st.markdown("The **integrity of your data** is our top priority. Thus, uploaded PDFs and the generated CSV files are neither stored nor archived on our systems. As soon as the conversion process is complete, all files are permanently deleted, ensuring your sensitive financial information remains confidential and in your control at all times. With XeroConvert, you can rest assured that your accounting data is processed with the utmost security and discretion.")
-    ui.badges(badge_list=[("Secure", "default"), ("PCSE Income Statements", "outline"), ("Xero Cloud Accounting", "outline")], class_name="flex gap-2", key="badges1")
-    ui.badges(badge_list=[("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net", "secondary")], class_name="flex gap-2", key="badges2")
+st.markdown("""**XeroConvert** is an innovative solution designed to simplify the account management and processing challenges faced by GP surgeries. This tool seamlessly converts **PCSE Payment Statements** into a formatted CSV file, optimized for direct import into **Xero**, the leading Online Accounting software.""")
+st.markdown("""With XeroConvert, you can process a full year's worth of statements in less than an hour, revolutionizing your accounting practices.""")
+st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
 
-    email_verification_section()
-else:
-    st.markdown('Please leave **feedback** when invited, to help improve this app.')
-    invoice_form_section()
+st.markdown("The **integrity of your data** is our top priority. Thus, uploaded PDFs and the generated CSV files are neither stored nor archived on our systems. As soon as the conversion process is complete, all files are permanently deleted, ensuring your sensitive financial information remains confidential and in your control at all times. With XeroConvert, you can rest assured that your accounting data is processed with the utmost security and discretion.")
+ui.badges(badge_list=[("Secure", "default"), ("PCSE Income Statements", "outline"), ("Xero Cloud Accounting", "outline")], class_name="flex gap-2", key="badges1")
+ui.badges(badge_list=[("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net", "secondary")], class_name="flex gap-2", key="badges2")
+st.markdown('Please leave **feedback** when invited, to help improve this app.')
+invoice_form_section()
     
     

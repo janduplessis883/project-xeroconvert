@@ -8,17 +8,14 @@ import re
 import contiguity
 import os
 import datetime
-import requests
 import streamlit as st
 
-# Try to get the environment variable first
+client = None
 client_id = os.environ.get("CONTIGUITY_API")
-
-# If not found, fall back to Streamlit secrets
 if client_id is None:
-    client_id = st.secrets.CONTIGUITY_API
-    
-client = contiguity.login(client_id, True)
+    client_id = st.secrets.get("CONTIGUITY_API")
+if client_id:
+    client = contiguity.login(client_id, True)
 
 # = Backend Functions + Operations =================================================================
 
@@ -31,28 +28,9 @@ def is_valid_email(email):
         return True
     return False
 
-        
-# Function to send verification code via email
-def send_verification_code(email, code):
-    email_message = f"""Hi,<BR>
-        Thank you for using <b>XeroConvert</b>!<BR>Your verification code is:
-        <h1>{code}</h1>
-        Please enter this code into the XeroConvert App to continue with PCSE Invoice convertions.<BR><BR>
-        Best wishes,<BR>
-        <B>XeroConvert</B>"""
-        
-    email_object = {
-        "to": email,
-        "from": "XeroConvert",
-        "replyTo": "jan.duplessis@nhs.net",
-        "subject": "XeroConvert - Verification Email",
-        "html": email_message,
-    }
-
-    client.send.email(email_object)
-    print("👍 Verification email sent!")
-    
 def send_final_email(email, invoice_no, diff_amount):
+    if client is None:
+        return
     email_message = f"""Hi,<BR><BR>
 
 Thank you for choosing XeroConvert for your invoicing needs.<BR>
@@ -81,7 +59,7 @@ Jan du Plessis<BR>
 <B>XeroConvert</B><BR><BR>
         <img src='https://github.com/janduplessis883/project-xeroconvert/blob/master/images/bmc_qr.png?raw=true' width=150>
         """
-        
+
     email_object = {
         "to": email,
         "from": "XeroConvert",
@@ -91,8 +69,10 @@ Jan du Plessis<BR>
     }
 
     client.send.email(email_object)
-    
+
 def send_success_email(email, invoice_no):
+    if client is None:
+        return
     email_message = f"""Hi,<br><br>
 
     Thank you for choosing <b>XeroConvert</b> for your invoicing needs.<br><br>
@@ -111,7 +91,7 @@ def send_success_email(email, invoice_no):
     <b>XeroConvert</b><br><br>
         <img src='https://github.com/janduplessis883/project-xeroconvert/blob/master/images/bmc_qr.png?raw=true' width=150>
         """
-        
+
     email_object = {
         "to": email,
         "from": "XeroConvert",
@@ -121,11 +101,11 @@ def send_success_email(email, invoice_no):
     }
 
     client.send.email(email_object)
-   
+
 
 # Get Text off PDF Pages, one at a time
 def read_pdf_pages(loaded_pdf):
-    reader = PdfReader(io.BytesIO(loaded_pdf.read())) 
+    reader = PdfReader(io.BytesIO(loaded_pdf.read()))
     full_text = ''
     for page in reader.pages:
         text = page.extract_text()
@@ -133,8 +113,8 @@ def read_pdf_pages(loaded_pdf):
             full_text += text
     full_lines_list = full_text.splitlines()
     return full_lines_list
-    
-    
+
+
 def remove_qof(lines_list):
     phrase_to_remove = 'Quality Outcomes Framework'
     modified_list = [my_string.replace(phrase_to_remove, '') for my_string in lines_list]
@@ -153,7 +133,7 @@ def list_minusexclusion_only_pound(input_list):
             pass
         elif "£" in list:
             final_list.append(str(list))
-            
+
     return final_list
 
 def find_index_with_text(my_list, search_text):
@@ -236,7 +216,7 @@ def build_df_lists(input_list, invoice_nu, invoice_da_te, progress_callback=None
     type_ = []
     sent = []
     status = []
-    
+
     account_code_dict = {
     "rates": "102",
     "childhood flu": "124A",
@@ -271,13 +251,13 @@ def build_df_lists(input_list, invoice_nu, invoice_da_te, progress_callback=None
     "global": "100",
     "aspiration": "103"
     }
-    
+
     for i, l in enumerate(input_list):
         if progress_callback is not None:
             progress = (i + 1) / len(input_list)
             time.sleep(0.08)
             progress_callback(progress)
-            
+
         if "-£" in l:
 
             # Split once at the first occurrence of "-£"
@@ -287,7 +267,7 @@ def build_df_lists(input_list, invoice_nu, invoice_da_te, progress_callback=None
 
             # There should not be a second split on "£" here as it's already split above
             invoiceable_value_str = value_pair_list[-1].replace(",", "")
-            
+
             invoiceable_value = float(invoiceable_value_str)
             invoiceable_value = invoiceable_value * -1
             contact_name.append('NHS England GMS')
@@ -342,7 +322,7 @@ def build_df_lists(input_list, invoice_nu, invoice_da_te, progress_callback=None
 
             invoiceable_value_str = value_pair_list[-1].replace(",", "")
             invoiceable_value = float(invoiceable_value_str)
-        
+
             contact_name.append('NHS England GMS')
             email_address.append("")
             PO1.append("")
@@ -386,15 +366,15 @@ def build_df_lists(input_list, invoice_nu, invoice_da_te, progress_callback=None
             type_.append('Sales Invoice')
             sent.append('')
             status.append('')
-            
+
         if progress_callback is not None:
             progress = (i + 1) / len(input_list)
             progress_callback(progress)
-            
+
     total_amount = sum(unit_amount)
     for i in range(len(unit_amount)):
         total.append(total_amount)
-            
+
     output_dict = {
         'ContactName': contact_name,
         'EmailAddress': email_address,
@@ -441,7 +421,7 @@ def build_df_lists(input_list, invoice_nu, invoice_da_te, progress_callback=None
         'Sent':	sent,
         'Status': status
     }
-    
+
 
     return output_dict
 
@@ -460,30 +440,6 @@ def return_timestamp():
 
     return timestamp_string
 
-def send_webhook(email, code):
-    """
-    Send a webhook with the specified email address.
-
-    :param email: The email address to send.
-    :param webhook_url: The URL of the webhook endpoint.
-    """
-    data = {'email': email,
-            'code': code}
-    response = requests.post('https://eo51s228rg0gorn.m.pipedream.net', json=data)
-    return response
-
-def send_webhook_outcome(code, amount):
-    """
-    Send a webhook with the specified email address.
-
-    :param email: The email address to send.
-    :param webhook_url: The URL of the webhook endpoint.
-    """
-    data = {'outcome': amount,
-            'code': code}
-    response = requests.post('https://eopqq9ouuddk92z.m.pipedream.net', json=data)
-    return response
-
 # # = Decorators =================================================================
 def time_it(func):
     def wrapper(*args, **kwargs):
@@ -496,4 +452,3 @@ def time_it(func):
         return result
 
     return wrapper
-

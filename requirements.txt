@@ -1,18 +1,14 @@
 # Core packages
-numpy==1.23.5
-pandas==1.5.3
+numpy
+pandas
 
 # Visualization
-matplotlib 
+matplotlib
 seaborn
 
-# Jupyter
-notebook==6.5.5
-notebook_shim==0.2.3
-ipykernel
-ipywidgets
 
-# Utilities 
+
+# Utilities
 colorama
 pytest
 icecream
@@ -23,5 +19,4 @@ PyPDF2
 streamlit
 contiguity
 requests
-trubrics[streamlit]
 streamlit_shadcn_ui
