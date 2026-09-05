@@ -98,7 +98,7 @@ def invoice_form_section():
         )
         st.markdown("App by [janduplessis883](https://github.com/janduplessis883/project-xeroconvert)")
 
-switch_value = ui.switch(default_checked=False, label="Demo Video", key="switch1")
+switch_value = ui.switch(value=False, label="Demo Video", key="switch1")
 if switch_value == True:
     video_url = "https://youtu.be/2v31iyN6fHo?si=6I-PXLOyw8BDntKU"
     st.video(video_url)
@@ -108,8 +108,8 @@ st.markdown("""With XeroConvert, you can process a full year's worth of statemen
 st.markdown("Simply download your PCSE Statements as **Expanded PDFs**, upload them to XeroConvert, and let the Python magic extract the necessary information for you.")
 
 st.markdown("The **integrity of your data** is our top priority. Thus, uploaded PDFs and the generated CSV files are neither stored nor archived on our systems. As soon as the conversion process is complete, all files are permanently deleted, ensuring your sensitive financial information remains confidential and in your control at all times. With XeroConvert, you can rest assured that your accounting data is processed with the utmost security and discretion.")
-ui.badges(badge_list=[("Secure", "default"), ("PCSE Income Statements", "outline"), ("Xero Cloud Accounting", "outline")], class_name="flex gap-2", key="badges1")
-ui.badges(badge_list=[("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net", "secondary")], class_name="flex gap-2", key="badges2")
+ui.badges(items=[("Secure", "default"), ("PCSE Income Statements", "outline"), ("Xero Cloud Accounting", "outline")], key="badges1")
+ui.badges(items=[("Developed by Jan du Plessis, NHS GP Practice Manager, London - jan.duplessis@nhs.net", "secondary")], key="badges2")
 st.markdown('Please leave **feedback** when invited, to help improve this app.')
 invoice_form_section()
     
